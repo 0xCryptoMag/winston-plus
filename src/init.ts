@@ -53,7 +53,7 @@ function createPatchedLogger(
 }
 
 export function init(logger: Logger): Logger {
-  const patchedLogger: Logger = { ...logger } as Logger
+  const patchedLogger = Object.create(Object.getPrototypeOf(logger))
   patchedLogger.add = logger.add.bind(logger)
 
   patchedLogger.emerg = createPatchedLogger(logger, 'emerg')
