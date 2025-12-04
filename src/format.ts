@@ -2,7 +2,7 @@ import path from 'path'
 import { inspect } from 'util'
 
 import colors from 'colors/safe'
-import { Format, TransformableInfo } from 'logform'
+import { Format } from 'logform'
 import { MESSAGE, SPLAT } from 'triple-beam'
 import { format as winstonFormat, config } from 'winston'
 import Table from 'cli-table3'
@@ -70,11 +70,7 @@ export class DevConsoleFormat {
     })
   }
 
-  private getMessage(
-    info: TransformableInfo,
-    chr: string,
-    color: string
-  ): string {
+  private getMessage(info: any, chr: string, color: string): string {
     let message = info.message
 
     const hasMessage = message.replace(DevConsoleFormat.reSpacesOrEmpty, '')
@@ -89,6 +85,8 @@ export class DevConsoleFormat {
       `$1${color}${colors.dim(chr)}${colors.reset(' ')}`
     )
 
+    message = message
+
     return `${info.level}:${message}`
   }
 
@@ -102,7 +100,7 @@ export class DevConsoleFormat {
     return padding
   }
 
-  private getMs(info: TransformableInfo): string {
+  private getMs(info: any): string {
     let ms = ''
     if (info.ms) {
       ms = colors.italic(colors.dim(` ${info.ms}`))
@@ -111,7 +109,7 @@ export class DevConsoleFormat {
     return ms
   }
 
-  private getTimestamp(info: TransformableInfo): string {
+  private getTimestamp(info: any): string {
     let timestamp = ''
     if (info.timestamp) {
       timestamp = colors.italic(
@@ -122,7 +120,7 @@ export class DevConsoleFormat {
     return timestamp
   }
 
-  private getStackLines(info: TransformableInfo): string[] {
+  private getStackLines(info: any): string[] {
     const stackLines: string[] = []
 
     if (info.stack) {
@@ -134,12 +132,12 @@ export class DevConsoleFormat {
     return stackLines
   }
 
-  private getMetaLines(info: TransformableInfo): string[] {
+  private getMetaLines(info: any): string[] {
     const metaLines: string[] = []
     let splat = info[(SPLAT as unknown) as string][0]
 
     if (this.opts.table) {
-      if (Object.keys(splat). length > 0) {
+      if (Object.keys(splat).length > 0) {
         this.makeTable(splat, metaLines)
       }
     } else {
@@ -171,7 +169,7 @@ export class DevConsoleFormat {
     return callee
   }
 
-  private getColor(info: TransformableInfo): string {
+  private getColor(info: any): string {
     let color = ''
     const colorMatch = info.level.match(DevConsoleFormat.reColor)
 
@@ -183,7 +181,7 @@ export class DevConsoleFormat {
   }
 
   private write(
-    info: TransformableInfo,
+    info: any,
     metaLines: string[],
     color: string,
     callee?: Callee
@@ -238,16 +236,16 @@ export class DevConsoleFormat {
     }
   }
 
-  public transform(info: TransformableInfo): TransformableInfo {
+  public transform(info: any): any {
+    info.message = info.message?.replace('\n', '').trimEnd() ?? ''
+
     const index = (MESSAGE as unknown) as string
     const callee = this.getCallee()
-    
-    let metaLines: string[] = [
-        ...this.getStackLines(info)
-    ]
+
+    let metaLines: string[] = [...this.getStackLines(info)]
 
     if (this.opts.showMeta) {
-        metaLines.push(...this.getMetaLines(info))
+      metaLines.push(...this.getMetaLines(info))
     }
 
     const color = this.getColor(info)
