@@ -56,6 +56,12 @@ export function init(logger: Logger): Logger {
   const patchedLogger = Object.create(Object.getPrototypeOf(logger))
   patchedLogger.add = logger.add.bind(logger)
 
+  Object.defineProperty(patchedLogger, 'transports', {
+    get: () => logger.transports,
+    enumerable: true,
+    configurable: true,
+  })
+
   patchedLogger.emerg = createPatchedLogger(logger, 'emerg')
   patchedLogger.alert = createPatchedLogger(logger, 'alert')
   patchedLogger.crit = createPatchedLogger(logger, 'crit')
