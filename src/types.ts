@@ -11,9 +11,10 @@ export interface DevConsoleFormatOptions {
   basePath?: string
   showTimestamps?: boolean
   addLineSeparation?: boolean
-  logLevels?: {[k: string]: number}
+  logLevels?: { [k: string]: number }
   showMeta?: boolean
   table?: boolean
+  silent?: boolean
 }
 
 export type DevConsoleTransportOptions = DevConsoleFormatOptions

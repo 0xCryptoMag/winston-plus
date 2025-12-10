@@ -8,6 +8,7 @@ export function transport(
   opts?: DevConsoleTransportOptions
 ): ConsoleTransportInstance {
   return new transports.Console({
+    silent: opts?.silent,
     format: format(opts),
   })
 }
